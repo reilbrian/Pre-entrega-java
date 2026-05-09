@@ -11,6 +11,7 @@ public class GestorProductos {
         // <Producto> permite guardar cualquier subclase gracias al polimorfismo
         // Métodos que vamos a usar: add(), get(), size()
         ArrayList<Producto> productos = new ArrayList<>();
+        ArrayList<Producto> pedidos = new ArrayList<>();
         String busqueda = null;
         Producto encontrado = null;
         int stock;
@@ -44,11 +45,11 @@ public class GestorProductos {
 
                     nombre = Validador.leerTexto(scanner, "Nombre:  ");
                     precio = Validador.leerPrecio(scanner, "Precio:  ");
-                    stock     = Validador.leerEnteroPositivo(scanner, "Stock:   ");
+                    stock  = Validador.leerEnteroPositivo(scanner, "Stock:   ");
 
                     // add() agrega al final de la lista
                     // Polimorfismo: guardamos ProductoFisico en lista de tipo Producto
-                    productos.add(0,new Producto(nombre, precio, stock));
+                    productos.add(new Producto(nombre, precio, stock));
 
                     // size() devuelve la cantidad actual de elementos
                     System.out.println("Producto agregado. Total: " + productos.size());
@@ -87,7 +88,7 @@ public class GestorProductos {
                     if (encontrado != null) {
                         System.out.println("Encontrado: " + encontrado);
                         nombre = Validador.leerTexto(scanner, "Nuevo Nombre:  ");
-                        encontrado.setNombre(nombre);
+                        encontrado.setNombre(nombre.trim().toUpperCase());
                         precio = Validador.leerPrecio(scanner, "NuevoPrecio:  ");
                         encontrado.setPrecio(precio);
                         stock  = Validador.leerEnteroPositivo(scanner, "Nuevo Stock:   ");
@@ -190,6 +191,63 @@ public class GestorProductos {
                     break;
                 
                 case 6:
+                     System.out.println("\n── Productos registrados ──");
+
+                    if (productos.size() == 0) {
+                        System.out.println("No hay productos cargados aún.");
+                    } else {
+                        // get(i) accede al elemento en la posición i
+                        // toString() se llama automáticamente en println()
+                        // Java decide en ejecución qué versión usar → polimorfismo
+                        for (int i = 0; i < productos.size(); i++) {
+                            System.out.println((i + 1) + ". " + productos.get(i));
+                        }
+                    }
+                    boolean espera = false;
+                    while(espera == false) {
+                        System.out.println("ingresa el nombre del producto deseado.");
+                        busqueda = scanner.nextLine();
+                        busqueda = busqueda.trim().toUpperCase();
+
+                        encontrado = null;
+
+                        for (int i = 0; i < productos.size(); i++) {
+                        // equals() para comparar Strings — NUNCA ==
+                        // Los datos vienen de Scanner → nunca del String Pool
+                        // == siempre daría false aunque el texto sea idéntico
+                            if (productos.get(i).getNombre().equals(busqueda)) {
+                            encontrado = productos.get(i);
+                            break;
+                            }
+                        }
+                        if (encontrado != null) {
+                            System.out.println("Encontrado: " + encontrado);
+                            System.out.println("cuantos quieres " );
+                            int cantidad = Validador.leerEnteroPositivo(scanner, "cantidad:   ");
+                            if(cantidad>encontrado.getStock()){
+                                System.out.println("no hay suficiente");
+                            }
+                            if(cantidad<=encontrado.getStock()){
+                                encontrado.setStock(encontrado.getStock()-cantidad);
+                            }
+                            
+                        } else {
+                            System.out.println("No se encontró: " + busqueda);
+                        }
+                        
+                        
+                        
+                        
+                        System.out.println("algun producto mas? para NO escribe no y para SI escribe si");
+                        String espera2 = scanner.nextLine();
+                        if (espera2.equals("si")) {
+                             espera = false;
+                        } else {
+                            espera = true;
+                        }
+                        
+
+                    }
                     break;
 
                 case 7:
